@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { IValue } from "./lib/types";
+import { Form } from "./widget/form";
+import { fetchFact } from "./lib/api";
 
-function App() {
+export function App() {
+  const [data, setData] = useState<string>(
+    "Choose one of them and here data will be displayed"
+  );
+
+  async function fetchData(values: IValue) {
+    try {
+      const result = await fetchFact(values.type, values.query);
+      setData(result?.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setData("Error fetching data");
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <Form isRandom={false} fetchData={fetchData} />
+      <p>{data}</p>
+      <Form isRandom={true} fetchData={fetchData} />
     </div>
   );
 }
-
-export default App;
